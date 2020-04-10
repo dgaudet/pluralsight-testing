@@ -1,63 +1,58 @@
-const EventEmitter = require('events')
+const assert = require('assert')
 
-class ReviewProcess extends EventEmitter {
+class ReviewProcess {
   constructor (args) {
-    super()
-    this.callback
-
-    this.on('application-received', this.ensureAppIsValid)
-    this.on('validated', this.findNextMission)
-    this.on('mission-selected', this.roleIsAvailable)
-    this.on('role-available', this.ensureRoleCompatible)
-    this.on('role-compatible', this.acceptApplication)
-
-    this.on('invalid', this.denyApplication)
+    assert(args.application, 'Need an application to review')
+    this._app = args.application
   }
 
-  ensureAppIsValid (app) {
-    if (app.isValid()) {
-      this.emit('validated', app)
-    } else {
-      this.emit('invalid', app.validationMessage())
+  ensureAppIsValid () {
+    if (this._app.isValid()) {
+      return true
     }
+    throw new Error(this._app.validationMessage())
   }
 
-  findNextMission (app) {
-    app.mission = {
+  findNextMission () {
+    return {
       commander: null,
       pilot: null,
       MAVPilot: null,
       passengers: []
     }
-    this.emit('mission-selected', app)
   }
 
-  roleIsAvailable (app) {
+  roleIsAvailable () {
     // not sure what to do about roles
-    this.emit('role-available', app)
+    return true
   }
 
-  ensureRoleCompatible (app) {
-    this.emit('role-compatible', app)
+  ensureRoleCompatible () {
+    return true
   }
 
-  acceptApplication () {
-    this.callback(null, {
+  approveApplication () {
+    return true
+  }
+
+  processApplication(next) {
+    try {
+      this.ensureAppIsValid ()
+      this.findNextMission ()
+      this.roleIsAvailable ()
+      this.ensureRoleCompatible ()
+      this.approveApplication ()
+    } catch(err) {
+      next (null, {
+        success: false,
+        message: err
+      })
+      return
+    }
+    next (null, {
       success: true,
-      message: 'Welcome to the Mars Program!'
+      message: 'Welcome to Mars!'
     })
-  }
-
-  denyApplication (message) {
-    this.callback(null, {
-      success: false,
-      message
-    })
-  }
-
-  processApplication(app, next) {
-    this.callback = next
-    this.emit('application-received', app)
   }
 }
 

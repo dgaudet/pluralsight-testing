@@ -15,18 +15,14 @@ describe('The Review Process', () => {
       weight: 180
     })
 
-    let review = new ReviewProcess()
-    const validationSpy = sinon.spy()
-    const missionSpy = sinon.spy()
-    const roleAvailableSpy = sinon.spy()
-    const roleCompatibleSpy = sinon.spy()
+    let review = new ReviewProcess({application: validApp})
+    sinon.spy(review, 'ensureAppIsValid')
+    sinon.spy(review, 'findNextMission')
+    sinon.spy(review, 'roleIsAvailable')
+    sinon.spy(review, 'ensureRoleCompatible')
 
-    beforeEach(() => {
-      review.on('validated', validationSpy)
-      review.on('mission-selected', missionSpy)
-      review.on('role-available', roleAvailableSpy)
-      review.on('role-compatible', roleCompatibleSpy)
-      review.processApplication(validApp, (err, result) => {
+    beforeEach(async () => {
+      await review.processApplication((err, result) => {
         decision = result
       })
     })
@@ -35,16 +31,35 @@ describe('The Review Process', () => {
       assert(decision.success, decision.message)
     })
     it('ensures the application is valid', () => {
-      assert(validationSpy.called)
+      assert(review.ensureAppIsValid.called)
     })
     it('selects a mission', () => {
-      assert(missionSpy.called)
+      assert(review.findNextMission.called)
     })
     it('ensure a role exists', () => {
-      assert(roleAvailableSpy.called)
+      assert(review.roleIsAvailable.called)
     })
     it('ensures the role is compatible', () => {
-      assert(roleCompatibleSpy.called)
+      assert(review.ensureRoleCompatible.called)
+    })
+  })
+
+  describe('Receiving an invalid application', () => {
+    let decision
+    let inValidApp = new MembershipApplication({
+      first: 'Test',
+      last: 'User',
+    })
+
+    let review = new ReviewProcess({application: inValidApp})
+
+    it('Returns an error', async () => {
+      await review.processApplication((err, result) => {
+        decision = result
+      })
+
+      assert(!decision.success)
+      assert(decision.message)
     })
   })
 })
