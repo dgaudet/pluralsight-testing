@@ -1,8 +1,15 @@
 const _ = require('underscore')._
+const moment = require('moment')
 
 class MembershipApplication  {
   constructor(args) {
     _.extend(this, args)
+    this.validUntil = this.validUntil ? moment(this.validUntil) : moment().add(10, 'days')
+  }
+
+
+  expired () {
+    return this.validUntil.isBefore(moment())
   }
 
   emailIsValid () {
@@ -30,7 +37,8 @@ class MembershipApplication  {
       this.heightIsValid() &&
       this.ageIsValid() &&
       this.weightIsValid() &&
-      this.nameIsValid()
+      this.nameIsValid() &&
+      !this.expired()
   }
 }
 

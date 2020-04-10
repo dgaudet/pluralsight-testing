@@ -9,6 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "moment": "^2.24.0",
     "underscore": "^1.10.2"
+  },
+  "devDependencies": {
+    "sinon": "^9.0.2"
   }
 }

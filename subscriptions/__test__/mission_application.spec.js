@@ -1,4 +1,5 @@
 const assert = require('assert')
+const moment = require('moment')
 const MembershipApplication = require('../MembershipApplication')
 
 describe('Membership Application requirements', () => {
@@ -30,6 +31,11 @@ describe('Membership Application requirements', () => {
   })
 
   describe('Application invalid if...', () => {
+    it('is expired', () => {
+      const app = new MembershipApplication({validUntil: Date.parse('2010/01/01')})
+      assert(app.expired())
+    })
+
     it('email is 4 characters or less', () => {
       const invalidMembership = new MembershipApplication({email: 'd@d'})
       assert(!invalidMembership.emailIsValid())
