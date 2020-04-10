@@ -32,6 +32,24 @@ class MembershipApplication  {
     return this.first && this.last
   }
 
+  validationMessage () {
+    if (this.isValid()) {
+      return 'Application is valid'
+    } else if (!this.emailIsValid()) {
+      return 'Email is invalid'
+    } else if (!this.heightIsValid()) {
+      return 'Height is invalid'
+    } else if (!this.ageIsValid()) {
+      return 'Age is invalid'
+    } else if (!this.weightIsValid()) {
+      return 'Weight is invalid'
+    } else if (!this.nameIsValid()) {
+      return 'Name is invalid'
+    } else if (this.expired()) {
+      return 'Application has expired'
+    }
+  }
+
   isValid () {
     return this.emailIsValid() &&
       this.heightIsValid() &&
