@@ -1,6 +1,6 @@
 const assert = require('assert')
 const ReviewProcess = require('../processes/Review')
-const MembershipApplication = require('../MembershipApplication')
+const MembershipApplication = require('../models/MembershipApplication')
 const sinon = require('sinon')
 const Helpers = require('./helpers')
 

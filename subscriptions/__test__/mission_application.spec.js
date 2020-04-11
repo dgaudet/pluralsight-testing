@@ -1,5 +1,5 @@
 const assert = require('assert')
-const MembershipApplication = require('../MembershipApplication')
+const MembershipApplication = require('../models/MembershipApplication')
 const Helpers = require('./helpers')
 
 describe('Membership Application requirements', () => {

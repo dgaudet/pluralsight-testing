@@ -1,4 +1,4 @@
-const MembershipApplication = require('../../MembershipApplication')
+const MembershipApplication = require('../../models/MembershipApplication')
 
 exports.validApplication = new MembershipApplication({
   first: 'Test',
