@@ -6,11 +6,14 @@ const db = require('../db')
 const MissionControl = require('../models/MissionControl')
 const Mission = require('../models/Mission')
 
-sinon.stub(db, 'getMissionByLaunchDate').returns(null)
-sinon.stub(db, 'createNextMission').returns(new Mission())
-const missionControl = new MissionControl({ db })
-
 describe('Mission Planning', () => {
+  let missionControl
+  beforeAll(() => {
+    sinon.stub(db, 'getMissionByLaunchDate').returns(null)
+    sinon.stub(db, 'createNextMission').returns(new Mission())
+    missionControl = new MissionControl({ db })
+  })
+
   describe('No Current Mission', () => {
     let currentMission
 
