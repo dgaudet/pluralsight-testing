@@ -1,15 +1,9 @@
-exports.getMissionByLaunchDate = async function (launchDate) {
+class DB {
+  async getMissionByLaunchDate (launchDate) {
+  }
 
+  async createNextMission (mission) {
+  }
 }
 
-exports.createNextMission = async function (mission) {
-
-}
-
-exports.update = async function (args) {
-
-}
-
-exports.delete = async function (args) {
-
-}
+module.exports = DB

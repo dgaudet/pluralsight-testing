@@ -1,19 +1,26 @@
 const assert = require('assert')
 const ReviewProcess = require('../processes/Review')
 const MembershipApplication = require('../models/MembershipApplication')
+const Mission = require('../models/Mission')
 const sinon = require('sinon')
 const Helpers = require('./helpers')
+const DB = require('../db')
 
 describe('The Review Process', () => {
   describe('Receiving a valid application', () => {
     let decision
-    let validApp = Helpers.validApplication
+    const validApp = Helpers.validApplication
+    let review
+    let db
 
-    let review = new ReviewProcess({application: validApp})
-    sinon.spy(review, 'ensureAppIsValid')
-    sinon.spy(review, 'findNextMission')
-    sinon.spy(review, 'roleIsAvailable')
-    sinon.spy(review, 'ensureRoleCompatible')
+    beforeAll(() => {
+      db = Helpers.stubDb()
+      review = new ReviewProcess({application: validApp, db })
+      sinon.spy(review, 'ensureAppIsValid')
+      sinon.spy(review, 'findNextMission')
+      sinon.spy(review, 'roleIsAvailable')
+      sinon.spy(review, 'ensureRoleCompatible')
+    })
 
     beforeEach(async () => {
       await review.processApplication((err, result) => {
@@ -45,7 +52,8 @@ describe('The Review Process', () => {
       last: 'User',
     })
 
-    let review = new ReviewProcess({application: inValidApp})
+    const db = Helpers.stubDb()
+    let review = new ReviewProcess({application: inValidApp, db})
 
     it('Returns an error', async () => {
       await review.processApplication((err, result) => {

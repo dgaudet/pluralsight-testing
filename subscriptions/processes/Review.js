@@ -1,9 +1,11 @@
 const assert = require('assert')
+const MissionControl = require('../models/MissionControl')
 
 class ReviewProcess {
   constructor (args) {
     assert(args.application, 'Need an application to review')
     this._app = args.application
+    this._missionControl = new MissionControl({ db: args.db })
   }
 
   ensureAppIsValid () {

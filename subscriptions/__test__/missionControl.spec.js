@@ -1,16 +1,16 @@
-const moment = require('moment')
 const assert = require('assert')
 const sinon = require('sinon')
 
-const db = require('../db')
+const DB = require('../db')
 const MissionControl = require('../models/MissionControl')
 const Mission = require('../models/Mission')
+const Helpers = require('./helpers')
 
 describe('Mission Planning', () => {
   let missionControl
+  let db
   beforeAll(() => {
-    sinon.stub(db, 'getMissionByLaunchDate').returns(null)
-    sinon.stub(db, 'createNextMission').returns(new Mission())
+    db = Helpers.stubDb()
     missionControl = new MissionControl({ db })
   })
 
