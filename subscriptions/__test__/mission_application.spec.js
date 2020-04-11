@@ -1,22 +1,17 @@
 const assert = require('assert')
-const moment = require('moment')
 const MembershipApplication = require('../MembershipApplication')
+const Helpers = require('./helpers')
 
 describe('Membership Application requirements', () => {
   let validApp
   function given () {
     return {
-      first: 'Test',
-      last: 'User',
-      email: 'test@test.com',
-      age: 30,
-      height: 66,
-      weight: 180
+      application: Helpers.validApplication
     }
   }
 
   function when (context) {
-    validApp = new MembershipApplication(context)
+    validApp = context.application
   }
 
   beforeAll(() => {
