@@ -63,6 +63,10 @@ class Mission {
   isFlying () {
     return this.status === 'open'
   }
+
+  hasRoom () {
+    return true
+  }
 }
 
 module.exports = Mission
