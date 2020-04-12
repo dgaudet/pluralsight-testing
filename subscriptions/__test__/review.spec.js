@@ -1,10 +1,8 @@
 const assert = require('assert')
 const ReviewProcess = require('../processes/Review')
 const MembershipApplication = require('../models/MembershipApplication')
-const Mission = require('../models/Mission')
 const sinon = require('sinon')
 const Helpers = require('./helpers')
-const DB = require('../db')
 
 describe('The Review Process', () => {
   describe('Receiving a valid application', () => {
@@ -15,11 +13,13 @@ describe('The Review Process', () => {
 
     beforeAll(() => {
       db = Helpers.stubDb()
+      sinon.stub(db, 'saveAssignment').returns({saved: true})
       review = new ReviewProcess({application: validApp, db })
       sinon.spy(review, 'ensureAppIsValid')
       sinon.spy(review, 'findNextMission')
       sinon.spy(review, 'roleIsAvailable')
       sinon.spy(review, 'ensureRoleCompatible')
+      sinon.spy(review, 'approveApplication')
     })
 
     beforeEach(async () => {
@@ -30,6 +30,9 @@ describe('The Review Process', () => {
 
     it('returns success', () => {
       assert(decision.success, decision.message)
+    })
+    it('returns an assignment', () => {
+      assert(decision.assignment)
     })
     it('ensures the application is valid', () => {
       assert(review.ensureAppIsValid.called)
@@ -42,6 +45,10 @@ describe('The Review Process', () => {
     })
     it('ensures the role is compatible', () => {
       assert(review.ensureRoleCompatible.called)
+    })
+    it('ensures the application is approved', () => {
+      assert(review.approveApplication.called)
+      assert(db.saveAssignment.called)
     })
   })
 

@@ -1,9 +1,7 @@
 const assert = require('assert')
 const sinon = require('sinon')
 
-const DB = require('../db')
 const MissionControl = require('../models/MissionControl')
-const Mission = require('../models/Mission')
 const Helpers = require('./helpers')
 
 describe('Mission Planning', () => {

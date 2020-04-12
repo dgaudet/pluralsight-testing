@@ -1,10 +1,14 @@
 const assert = require('assert')
 const MissionControl = require('../models/MissionControl')
+const Assignment = require('../models/Assignment')
 
 class ReviewProcess {
   constructor (args) {
     assert(args.application, 'Need an application to review')
+    assert(args.db, 'Need a database instance')
     this._app = args.application
+    this._db = args.db
+    this._
     this._missionControl = new MissionControl({ db: args.db })
   }
 
@@ -15,35 +19,39 @@ class ReviewProcess {
     throw new Error(this._app.validationMessage())
   }
 
-  findNextMission () {
-    return {
-      commander: null,
-      pilot: null,
-      MAVPilot: null,
-      passengers: []
-    }
+  async findNextMission () {
+    return await this._missionControl.currentMission()
   }
 
-  roleIsAvailable () {
-    // not sure what to do about roles
-    return true
+  async roleIsAvailable () {
+    return await this._missionControl.hasSpaceForRole(this._app.role)
   }
 
-  ensureRoleCompatible () {
-    return true
+  generateAssignment (mission) {
+    return new Assignment({
+      passenger: this._app,
+      role: this._app.role,
+      mission: mission
+    })
   }
 
-  approveApplication () {
-    return true
+  ensureRoleCompatible (assignment) {
+    return assignment.passengerIsCompatible()
   }
 
-  processApplication(next) {
+  async approveApplication (assignment) {
+    await this._db.saveAssignment(assignment)
+  }
+
+  async processApplication(next) {
+    let assignment
     try {
       this.ensureAppIsValid ()
-      this.findNextMission ()
-      this.roleIsAvailable ()
-      this.ensureRoleCompatible ()
-      this.approveApplication ()
+      const nextMission = await this.findNextMission ()
+      assignment = this.generateAssignment(nextMission)
+      await this.roleIsAvailable ()
+      this.ensureRoleCompatible (assignment)
+      await this.approveApplication (assignment)
     } catch(err) {
       next (null, {
         success: false,
@@ -52,6 +60,7 @@ class ReviewProcess {
       return
     }
     next (null, {
+      assignment,
       success: true,
       message: 'Welcome to Mars!'
     })

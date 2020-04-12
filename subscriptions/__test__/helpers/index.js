@@ -9,7 +9,8 @@ exports.validApplication = new MembershipApplication({
   email: 'test@test.com',
   age: 30,
   height: 66,
-  weight: 180
+  weight: 180,
+  role: 'commander'
 })
 
 exports.stubDb = (args) => {

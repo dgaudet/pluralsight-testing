@@ -4,6 +4,10 @@ class DB {
 
   async createNextMission (mission) {
   }
+
+  async saveAssignment (assignment) {
+
+  }
 }
 
 module.exports = DB
